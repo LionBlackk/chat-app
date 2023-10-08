@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@prisma/client": "^5.4.1",
     "@tailwindcss/forms": "^0.5.6",
     "clsx": "^2.0.0",
     "next": "latest",
@@ -28,6 +29,7 @@
     "postcss": "latest",
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.5.5",
+    "prisma": "^5.4.1",
     "tailwindcss": "latest",
     "typescript": "latest"
   }
