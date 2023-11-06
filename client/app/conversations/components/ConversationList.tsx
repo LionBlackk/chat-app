@@ -7,7 +7,6 @@ import { useState } from 'react';
 import useConversation from '@/app/hooks/useConversation';
 import { useRouter } from 'next/navigation';
 import ConversationBox from './ConversationBox';
-import useOtherUser from '@/app/hooks/useOtherUser';
 
 interface ConversationListProps {
   initialItems: FullConversationType[];
@@ -20,10 +19,10 @@ const ConversationList: React.FC<ConversationListProps> = ({
   const router = useRouter();
   return (
     <aside
-      className={clsx(`
+      className={clsx(
+        `
         fixed
         inset-y-0
-        w-full
         overflow-y-auto
         border-r
         border-gray-200
@@ -32,7 +31,9 @@ const ConversationList: React.FC<ConversationListProps> = ({
         lg:block
         lg:w-80
         lg:pb-0
-      `)}
+      `,
+        isOpen ? 'hidden' : 'left-0 block w-full'
+      )}
     >
       <div className='px-5'>
         <div

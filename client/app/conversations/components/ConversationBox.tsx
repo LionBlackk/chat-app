@@ -53,7 +53,6 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
     }
     return 'Started a conversation';
   }, [lastMessage]);
-
   return (
     <div
       onClick={handleClick}
@@ -83,13 +82,13 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
             justify-between
           '
           >
-            <p className='text-md font-medium text-gray-900'>
+            <p className='font-medium text-gray-900'>
               {data.name || otherUser.name}
             </p>
             {lastMessage?.createdAt && (
               <p
                 className='
-                    text-sm
+                    text-xs
                     font-light
                     text-gray-400
                   '
