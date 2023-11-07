@@ -4,8 +4,9 @@ import Avatar from '@/app/components/Avatar';
 import useOtherUser from '@/app/hooks/useOtherUser';
 import { Conversation, User } from '@prisma/client';
 import Link from 'next/link';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { HiChevronLeft, HiEllipsisHorizontal } from 'react-icons/hi2';
+import ProfileDrawer from './ProfileDrawer';
 
 interface HeaderProps {
   conversation: Conversation & {
@@ -14,6 +15,7 @@ interface HeaderProps {
 }
 const Header: React.FC<HeaderProps> = ({ conversation }) => {
   const otherUser = useOtherUser(conversation);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const statusText = useMemo(() => {
     if (conversation.isGroup) {
       return `${conversation.users.length} members`;
@@ -23,54 +25,61 @@ const Header: React.FC<HeaderProps> = ({ conversation }) => {
   }, [conversation]);
 
   return (
-    <div
-      className='
+    <>
+      <ProfileDrawer
+        isOpen={drawerOpen}
+        data={conversation}
+        onClose={() => setDrawerOpen(false)}
+      />
+      <div
+        className='
         flex
         w-full
-        items-center
-        justify-between
-        border-b-[1px]
-        bg-white
-        px-4
-        py-3
-        shadow-sm
-        sm:px-4
-        lg:px-6
-    '
-    >
-      <div className='flex items-center gap-x-3'>
-        <Link
+          items-center
+          justify-between
+          border-b-[1px]
+          bg-white
+          px-4
+          py-3
+          shadow-sm
+          sm:px-4
+          lg:px-6
+      '
+      >
+        <div className='flex items-center gap-x-3'>
+          <Link
+            className='
+              block
+              cursor-pointer
+              text-sky-500
+              transition
+              hover:text-sky-600
+              lg:hidden
+            '
+            href='/conversations'
+          >
+            <HiChevronLeft size={32} />
+          </Link>
+          <Avatar user={otherUser} />
+          <div className='flex flex-col'>
+            <div className='font-medium'>
+              {conversation.name || otherUser.name}
+            </div>
+            <div className='text-sm font-light text-gray-500'>{statusText}</div>
+          </div>
+        </div>
+        <HiEllipsisHorizontal
+          onClick={() => setDrawerOpen(true)}
           className='
-            block
             cursor-pointer
             text-sky-500
             transition
-            hover:text-sky-600
-            lg:hidden
+            hover:text-sky-600  
           '
-          href='/conversations'
-        >
-          <HiChevronLeft size={32} />
-        </Link>
-        <Avatar user={otherUser} />
-        <div className='flex flex-col'>
-          <div className='font-medium'>
-            {conversation.name || otherUser.name}
-          </div>
-          <div className='text-sm font-light text-gray-500'>{statusText}</div>
-        </div>
+          size={32}
+        />
       </div>
-      <HiEllipsisHorizontal
-        onClick={() => {}}
-        className='
-          cursor-pointer
-          text-sky-500
-          transition
-          hover:text-sky-600  
-        '
-        size={32}
-      />
-    </div>
+    </>
   );
 };
 
