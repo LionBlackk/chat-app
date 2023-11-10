@@ -22,7 +22,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
         id={id}
         type={type}
         placeholder={placeholder}
-        autoComplete={id}
+        autoComplete='off'
         {...register(id, { required })}
         className='
           w-full

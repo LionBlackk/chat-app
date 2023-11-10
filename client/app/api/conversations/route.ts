@@ -26,7 +26,7 @@ export async function POST(request: Request) {
                 id: member.value,
               })),
               {
-                id: userId,
+                id: currentUser.id,
               },
             ],
           },
@@ -79,6 +79,7 @@ export async function POST(request: Request) {
     });
     return NextResponse.json(newConversation);
   } catch (error: any) {
+    console.log(error);
     return NextResponse.json('Internal Server Error', { status: 500 });
   }
 }
