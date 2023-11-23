@@ -5,8 +5,10 @@ import clsx from 'clsx';
 import { useSession } from 'next-auth/react';
 import { format } from 'date-fns';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ImageModal from './ImageModal';
+import axios from 'axios';
+import { AiOutlineFile } from 'react-icons/ai';
 
 interface MessageBoxProps {
   data: FullMessageType;
@@ -15,6 +17,24 @@ interface MessageBoxProps {
 const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast }) => {
   const session = useSession();
   const [isOpenModalImage, setIsOpenModalImage] = useState(false);
+
+  const [fileData, setFileData] = useState(null);
+  useEffect(() => {
+    const fetchFileData = async () => {
+      try {
+        const id = data.file.split('/').pop();
+        const response = await axios.post(`/api/upload`, { id: id });
+        setFileData(response.data); // Giả sử server trả về dữ liệu của file
+      } catch (error) {
+        console.error('Error fetching file data:', error);
+      }
+    };
+
+    if (data.file) {
+      fetchFileData();
+    }
+  }, [data.file]);
+
   const isOwn = data.sender.email === session.data?.user?.email;
 
   const seenList = (data.seen || [])
@@ -35,6 +55,17 @@ const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast }) => {
     data.image ? 'rounded-lg p-0' : 'rounded-full py-2 px-3'
   );
 
+  const handleFileSize = (size: number) => {
+    const KB = 1024;
+    const MB = KB * KB;
+    if (size < KB) {
+      return `${size} B`;
+    } else if (size < MB) {
+      return `${(size / KB).toFixed(2)} KB`;
+    } else if (size > MB) {
+      return `${(size / MB).toFixed(2)} MB`;
+    }
+  };
   return (
     <div className={container}>
       <div className={avatar}>
@@ -47,31 +78,50 @@ const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast }) => {
             {format(new Date(data.createdAt), 'p')}
           </div>
         </div>
-        <div className={message}>
-          <ImageModal
-            isOpen={isOpenModalImage}
-            onClose={() => setIsOpenModalImage(false)}
-            src={data.image}
-          />
-          {data.image ? (
-            <Image
-              onClick={() => setIsOpenModalImage(true)}
-              alt='Image'
-              height='288'
-              width='288'
+        {data.body || data.image ? (
+          <div className={message}>
+            <ImageModal
               src={data.image}
-              className='
-                translate
-                cursor-pointer
-                object-cover
-                transition
-                hover:scale-110
-              '
+              isOpen={isOpenModalImage}
+              onClose={() => setIsOpenModalImage(false)}
             />
-          ) : (
-            <div>{data.body}</div>
-          )}
-        </div>
+            {data.image ? (
+              <Image
+                alt='Image'
+                height='288'
+                width='288'
+                onClick={() => setIsOpenModalImage(true)}
+                src={data.image}
+                className='translate cursor-pointer object-cover transition hover:scale-110'
+              />
+            ) : (
+              <div>{data.body}</div>
+            )}
+          </div>
+        ) : null}
+        {data.file ? (
+          <div className='w-fit rounded-xl bg-[#F0F0F0] px-3 py-2 text-sm'>
+            <a target='_blank' href={data.file} rel='noopener noreferrer'>
+              <div className='flex items-center'>
+                <div className='flex h-[40px] w-[40px] items-center justify-center rounded-full bg-[#E4E4E4]'>
+                  <AiOutlineFile size={25} className='text-black ' />
+                </div>
+                <div className='ml-1 flex flex-col gap-y-[6px]'>
+                  {fileData && (
+                    <div className='ml-3 font-bold text-black'>
+                      {fileData?.name}
+                    </div>
+                  )}
+                  {fileData && (
+                    <div className='ml-3 text-gray-600'>
+                      {fileData?.size && handleFileSize(fileData.size)}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </a>
+          </div>
+        ) : null}
         {isLast && isOwn && seenList.length > 0 && (
           <div className='text-xs font-light text-gray-400'>{`Seen by ${seenList}`}</div>
         )}

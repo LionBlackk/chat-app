@@ -1,6 +1,7 @@
 import getCurrentUser from '@/app/actions/getCurrentUser';
 import { NextResponse } from 'next/server';
 import prisma from '@/app/libs/prismadb';
+import { triggerClient } from '@/app/libs/trigger';
 export async function POST(request: Request) {
   try {
     const currentUser = await getCurrentUser();
@@ -34,6 +35,11 @@ export async function POST(request: Request) {
         include: {
           users: true,
         },
+      });
+      newConversation.users.forEach(async (user) => {
+        if (user.email) {
+          await triggerClient(user.email, 'conversation/new', newConversation);
+        }
       });
       return NextResponse.json(newConversation);
     }
@@ -76,6 +82,11 @@ export async function POST(request: Request) {
       include: {
         users: true,
       },
+    });
+    newConversation.users.forEach((user) => {
+      if (user.email) {
+        triggerClient(user.email, 'conversation/new', newConversation);
+      }
     });
     return NextResponse.json(newConversation);
   } catch (error: any) {

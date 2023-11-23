@@ -3,12 +3,15 @@
 import clsx from 'clsx';
 import { FullConversationType } from '@/app/types';
 import { MdOutlineGroupAdd } from 'react-icons/md';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useConversation from '@/app/hooks/useConversation';
 import { useRouter } from 'next/navigation';
 import ConversationBox from './ConversationBox';
 import { User } from '@prisma/client';
 import GroupChatModal from '@/app/components/GroupChatModal';
+import { useSession } from 'next-auth/react';
+import useSocket from '@/app/hooks/useSocket';
+import { find } from 'lodash';
 
 interface ConversationListProps {
   initialItems: FullConversationType[];
@@ -22,6 +25,49 @@ const ConversationList: React.FC<ConversationListProps> = ({
   const { conversationId, isOpen } = useConversation();
   const [isOpenModal, setIsOpenModal] = useState(false);
   const router = useRouter();
+  const session = useSession();
+  const socket = useSocket();
+  const conversationKey = useMemo(() => {
+    return session.data?.user?.email;
+  }, [session.data?.user?.email]);
+  useEffect(() => {
+    if (!conversationKey) return;
+
+    const newHandler = (conversation: FullConversationType) => {
+      setItems((current) => {
+        if (find(current, { id: conversationId })) {
+          return current;
+        }
+        return [...current, conversation];
+      });
+    };
+
+    const updateHandler = (conversation: FullConversationType) => {
+      setItems((current) =>
+        current.map((currentConversation) => {
+          if (currentConversation.id === conversation.id) {
+            return {
+              ...currentConversation,
+              messages: conversation.messages,
+            };
+          }
+          return currentConversation;
+        })
+      );
+    };
+
+    const removeHandler = (conversation: FullConversationType) => {
+      setItems((current) =>
+        current.filter(
+          (currentConversation) => currentConversation.id !== conversation.id
+        )
+      );
+    };
+
+    socket.on('conversationNew', newHandler);
+    socket.on('conversationUpdate', updateHandler);
+    socket.on('conversationRemove', removeHandler);
+  }, [conversationKey, router, socket]);
   return (
     <>
       <GroupChatModal

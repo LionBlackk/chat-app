@@ -9,7 +9,7 @@ export default function Home() {
           alt='Logo'
           height='48'
           width='48'
-          src='/images/logo.png'
+          src='/images/logo2.png'
           className='mx-auto w-auto'
         ></Image>
         <h2 className='mt-6 text-center text-3xl font-bold tracking-tight text-gray-900'>

@@ -5,6 +5,7 @@ import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { HiPaperAirplane, HiPhoto } from 'react-icons/hi2';
 import MessageInput from './MessageInput';
 import { CldUploadButton } from 'next-cloudinary';
+import UploadFile from './UploadFile';
 const Form = () => {
   const { conversationId } = useConversation();
   const {
@@ -54,6 +55,7 @@ const Form = () => {
       >
         <HiPhoto size={30} className='text-sky-500' />
       </CldUploadButton>
+      <UploadFile conversationId={conversationId} />
       <form
         onSubmit={handleSubmit(onSubmit)}
         className='flex w-full items-center gap-x-3'

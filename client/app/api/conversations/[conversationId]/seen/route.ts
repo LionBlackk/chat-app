@@ -1,12 +1,14 @@
 import getCurrentUser from '@/app/actions/getCurrentUser';
 import { NextResponse } from 'next/server';
 import prisma from '@/app/libs/prismadb';
+import { triggerClient } from '@/app/libs/trigger';
 interface IParams {
   conversationId?: string;
 }
 export async function POST(request: Request, { params }: { params: IParams }) {
   try {
     const currentUser = await getCurrentUser();
+    const { conversationId } = params;
     if (!currentUser?.id || !currentUser?.email) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
@@ -33,7 +35,7 @@ export async function POST(request: Request, { params }: { params: IParams }) {
 
     if (!lastMessage) return NextResponse.json(conversation);
 
-    const updateMessage = await prisma.message.update({
+    const updatedMessage = await prisma.message.update({
       where: {
         id: lastMessage.id,
       },
@@ -49,7 +51,18 @@ export async function POST(request: Request, { params }: { params: IParams }) {
         },
       },
     });
-    return NextResponse.json(updateMessage);
+    await triggerClient(currentUser.email, 'conversation/update', {
+      id: conversationId,
+      messages: [updatedMessage],
+    });
+
+    if (lastMessage.seenIds.indexOf(currentUser.id) !== -1) {
+      return NextResponse.json(conversation);
+    }
+
+    await triggerClient(conversationId!, 'message/update', updatedMessage);
+
+    return NextResponse.json(updatedMessage);
   } catch (error: any) {
     console.log('Error Seen Message');
     return new NextResponse('Internal Error', { status: 500 });
