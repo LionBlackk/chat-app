@@ -1,4 +1,3 @@
-'use client';
 import Avatar from '@/app/components/Avatar';
 import { FullMessageType } from '@/app/types';
 import clsx from 'clsx';
@@ -8,23 +7,24 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import ImageModal from './ImageModal';
 import axios from 'axios';
-import { AiOutlineFile } from 'react-icons/ai';
+import { AiOutlineFile, AiOutlineAudio } from 'react-icons/ai';
 
 interface MessageBoxProps {
   data: FullMessageType;
   isLast?: boolean;
 }
+
 const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast }) => {
   const session = useSession();
   const [isOpenModalImage, setIsOpenModalImage] = useState(false);
+  const [fileData, setFileData] = useState<any>(null);
 
-  const [fileData, setFileData] = useState(null);
   useEffect(() => {
     const fetchFileData = async () => {
       try {
         const id = data.file.split('/').pop();
         const response = await axios.post(`/api/upload`, { id: id });
-        setFileData(response.data); // Giả sử server trả về dữ liệu của file
+        setFileData(response.data);
       } catch (error) {
         console.error('Error fetching file data:', error);
       }
@@ -35,6 +35,8 @@ const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast }) => {
     }
   }, [data.file]);
 
+  const [isPlaying, setIsPlaying] = useState(false);
+
   const isOwn = data.sender.email === session.data?.user?.email;
 
   const seenList = (data.seen || [])
@@ -43,14 +45,10 @@ const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast }) => {
     .join(', ');
 
   const container = clsx('flex p-4 gap-3', isOwn && 'justify-end');
-
   const body = clsx('flex flex-col gap-2', isOwn && 'items-end');
-
   const avatar = clsx(isOwn && 'order-2');
-
   const message = clsx(
-    `
-    text-sm w-fit overflow-hidden`,
+    'text-sm w-fit overflow-hidden',
     isOwn ? 'bg-sky-500 text-white' : 'bg-gray-100',
     data.image ? 'rounded-lg p-0' : 'rounded-full py-2 px-3'
   );
@@ -66,6 +64,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast }) => {
       return `${(size / MB).toFixed(2)} MB`;
     }
   };
+
   return (
     <div className={container}>
       <div className={avatar}>
@@ -78,7 +77,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast }) => {
             {format(new Date(data.createdAt), 'p')}
           </div>
         </div>
-        {data.body || data.image ? (
+        {data.body || data.image || data.audio ? (
           <div className={message}>
             <ImageModal
               src={data.image}
@@ -94,6 +93,14 @@ const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast }) => {
                 src={data.image}
                 className='translate cursor-pointer object-cover transition hover:scale-110'
               />
+            ) : data.audio ? (
+              <div className='flex items-center'>
+                <AiOutlineAudio size={25} className='mr-2 text-black' />
+                <audio controls>
+                  <source src={data.audio} type='audio/mp3' />
+                  Your browser does not support the audio element.
+                </audio>
+              </div>
             ) : (
               <div>{data.body}</div>
             )}

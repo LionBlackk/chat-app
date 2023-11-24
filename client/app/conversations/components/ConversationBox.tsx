@@ -49,6 +49,9 @@ const ConversationBox: React.FC<ConversationBoxProps> = ({
     if (lastMessage?.file) {
       return 'Send an file';
     }
+    if (lastMessage?.audio) {
+      return 'Send an audio';
+    }
     if (lastMessage?.body) {
       return lastMessage.body;
     }

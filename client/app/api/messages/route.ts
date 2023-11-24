@@ -6,7 +6,7 @@ export async function POST(request: Request) {
   try {
     const currentUser = await getCurrentUser();
     const body = await request.json();
-    const { message, image, conversationId, file } = body;
+    const { message, image, conversationId, file, audio } = body;
     if (!currentUser?.id || !currentUser?.email) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
@@ -16,6 +16,7 @@ export async function POST(request: Request) {
         body: message,
         image: image,
         file: file,
+        audio: audio,
         conversation: {
           connect: {
             id: conversationId,

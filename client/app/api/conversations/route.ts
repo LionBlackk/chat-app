@@ -36,9 +36,9 @@ export async function POST(request: Request) {
           users: true,
         },
       });
-      newConversation.users.forEach(async (user) => {
+      newConversation.users.forEach((user: any) => {
         if (user.email) {
-          await triggerClient(user.email, 'conversation/new', newConversation);
+          triggerClient(user.email, 'conversation/new', newConversation);
         }
       });
       return NextResponse.json(newConversation);
@@ -83,7 +83,7 @@ export async function POST(request: Request) {
         users: true,
       },
     });
-    newConversation.users.forEach((user) => {
+    newConversation.users.forEach((user: any) => {
       if (user.email) {
         triggerClient(user.email, 'conversation/new', newConversation);
       }

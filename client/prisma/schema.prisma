@@ -30,6 +30,8 @@ model User{
   accounts Account[]
   messages Message[]
   files File[]
+  audioFiles AudioFile[]
+
 }
 
 model Conversation{
@@ -70,6 +72,7 @@ model Message{
   body String?
   image String?
   file String?
+  audio String?
   createdAt DateTime @default(now())
 
   seenIds String[] @db.ObjectId
@@ -90,4 +93,14 @@ model File{
   size    Int
   userId  String @db.ObjectId
   user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AudioFile {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  content String
+  name String
+  type String
+  size Int
+  userId String @db.ObjectId
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
