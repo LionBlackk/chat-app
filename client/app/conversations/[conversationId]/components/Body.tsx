@@ -10,7 +10,7 @@ import { useSession } from 'next-auth/react';
 import { find } from 'lodash';
 
 interface BodyProps {
-  initialMessages: FullMessageType[];
+  initialMessages: FullMessageType[] | any;
 }
 const Body: React.FC<BodyProps> = ({ initialMessages }) => {
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -32,7 +32,7 @@ const Body: React.FC<BodyProps> = ({ initialMessages }) => {
 
     const newMessageHandler = (message: FullMessageType) => {
       axios.post(`/api/conversations/${conversationId}/seen`);
-      setMessages((current) => {
+      setMessages((current: any) => {
         if (find(current, { id: message.id })) {
           return current;
         }
@@ -41,8 +41,8 @@ const Body: React.FC<BodyProps> = ({ initialMessages }) => {
       bottomRef?.current?.scrollIntoView();
     };
     const updateMessageHandler = (newMessage: FullMessageType) => {
-      setMessages((current) =>
-        current.map((currentMessage) => {
+      setMessages((current: any) =>
+        current.map((currentMessage: any) => {
           if (currentMessage.id === newMessage.id) {
             return newMessage;
           }
@@ -62,7 +62,7 @@ const Body: React.FC<BodyProps> = ({ initialMessages }) => {
 
   return (
     <div className='h-full flex-1 overflow-y-auto'>
-      {messages.map((item, index) => (
+      {messages.map((item: any, index: any) => (
         <MessageBox
           key={item.id}
           isLast={index === messages.length - 1}

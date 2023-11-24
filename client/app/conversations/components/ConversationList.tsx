@@ -14,7 +14,7 @@ import useSocket from '@/app/hooks/useSocket';
 import { find } from 'lodash';
 
 interface ConversationListProps {
-  initialItems: FullConversationType[];
+  initialItems: FullConversationType[] | any;
   users: User[];
 }
 const ConversationList: React.FC<ConversationListProps> = ({
@@ -34,7 +34,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
     if (!conversationKey) return;
 
     const newHandler = (conversation: FullConversationType) => {
-      setItems((current) => {
+      setItems((current: any) => {
         if (find(current, { id: conversationId })) {
           return current;
         }
@@ -43,8 +43,8 @@ const ConversationList: React.FC<ConversationListProps> = ({
     };
 
     const updateHandler = (conversation: FullConversationType) => {
-      setItems((current) =>
-        current.map((currentConversation) => {
+      setItems((current: any) =>
+        current.map((currentConversation: any) => {
           if (currentConversation.id === conversation.id) {
             return {
               ...currentConversation,
@@ -57,9 +57,10 @@ const ConversationList: React.FC<ConversationListProps> = ({
     };
 
     const removeHandler = (conversation: FullConversationType) => {
-      setItems((current) =>
+      setItems((current: any) =>
         current.filter(
-          (currentConversation) => currentConversation.id !== conversation.id
+          (currentConversation: any) =>
+            currentConversation.id !== conversation.id
         )
       );
     };
@@ -125,7 +126,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
               <MdOutlineGroupAdd size={20}></MdOutlineGroupAdd>
             </div>
           </div>
-          {items.map((item) => (
+          {items.map((item: any) => (
             <ConversationBox
               key={item.id}
               data={item}

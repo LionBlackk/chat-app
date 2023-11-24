@@ -18,7 +18,7 @@ const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast }) => {
   const session = useSession();
   const [isOpenModalImage, setIsOpenModalImage] = useState(false);
 
-  const [fileData, setFileData] = useState(null);
+  const [fileData, setFileData] = useState<any>(null);
   useEffect(() => {
     const fetchFileData = async () => {
       try {
