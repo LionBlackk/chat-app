@@ -5,15 +5,15 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const { pid } = req.query;
-  const file = await prisma.file.findFirst({
+  const audio = await prisma.audioFile.findFirst({
     where: {
       id: pid as string,
     },
   });
-  if (!file) {
+  if (!audio) {
     return res.status(404).send('Invalid file id');
   }
-  const myBuffer = Buffer.from(file.content, 'base64');
-  return res.status(200).setHeader('content-type', file.type).send(myBuffer);
+  const myBuffer = Buffer.from(audio.content, 'base64');
+  return res.status(200).setHeader('content-type', audio.type).send(myBuffer);
 }
 //giúp xác định loại nội dung của phản hồi, nó thông báo cho client hiểu và hiển thị nội dung được gửi từ server

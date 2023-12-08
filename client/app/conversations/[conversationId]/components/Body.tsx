@@ -20,22 +20,24 @@ const Body: React.FC<BodyProps> = ({ initialMessages }) => {
   const session = useSession();
   useEffect(() => {
     const currentUserEmail = session.data?.user?.email;
+    socket.emit('connectionUser', currentUserEmail);
     socket.emit('conversations', {
       email: currentUserEmail,
       conversationId: conversationId,
     });
-    axios.post(`/api/conversations/${conversationId}/seen`);
+    // axios.post(`/api/conversations/${conversationId}/seen`);
   }, [conversationId, session.data?.user?.email, socket]);
 
   useEffect(() => {
     bottomRef?.current?.scrollIntoView();
 
     const newMessageHandler = (message: FullMessageType) => {
-      axios.post(`/api/conversations/${conversationId}/seen`);
+      // axios.post(`/api/conversations/${conversationId}/seen`);
       setMessages((current: any) => {
         if (find(current, { id: message.id })) {
           return current;
         }
+        axios.post(`/api/conversations/${conversationId}/seen`);
         return [...current, message];
       });
       bottomRef?.current?.scrollIntoView();

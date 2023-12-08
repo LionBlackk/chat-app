@@ -1,6 +1,7 @@
 import getCurrentUser from '@/app/actions/getCurrentUser';
 import prisma from '@/app/libs/prismadb';
 import { NextResponse } from 'next/server';
+const MAX_FILE_SIZE = 64 * 1024 * 1024;
 
 export async function POST(request: Request) {
   try {
@@ -14,6 +15,11 @@ export async function POST(request: Request) {
       const file: File | null = data.get('file') as unknown as File;
       if (!file) {
         return NextResponse.json({ success: false });
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        return new NextResponse('File size exceeds the maximum allowed size', {
+          status: 400,
+        });
       }
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes).toString('base64');

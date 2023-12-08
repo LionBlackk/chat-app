@@ -62,7 +62,7 @@ export async function POST(request: Request, { params }: { params: IParams }) {
 
     await triggerClient(conversationId!, 'message/update', updatedMessage);
 
-    return NextResponse.json(updatedMessage);
+    return new NextResponse('Success');
   } catch (error: any) {
     console.log('Error Seen Message');
     return new NextResponse('Internal Error', { status: 500 });

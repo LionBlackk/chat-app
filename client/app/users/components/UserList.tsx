@@ -1,10 +1,20 @@
 'use client';
+import useSocket from '@/app/hooks/useSocket';
 import UserBox from './UserBox';
 import { User } from '@prisma/client';
+import { useSession } from 'next-auth/react';
+import { useEffect } from 'react';
 interface UserListProps {
   items: User[];
 }
 const UserList: React.FC<UserListProps> = ({ items }) => {
+  const socket = useSocket();
+  const session = useSession();
+
+  useEffect(() => {
+    const currentUserEmail = session.data?.user?.email;
+    socket.emit('connectionUser', currentUserEmail);
+  }, [session.data?.user?.email, socket]);
   return (
     <aside
       className='
