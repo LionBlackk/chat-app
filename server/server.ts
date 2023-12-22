@@ -111,12 +111,29 @@ function getUsersByConversationId(conversationId: string) {
 }
 
 io.on("connection", (socket) => {
-  connections.push(socket.id);
+  if (socket.id) {
+    connections.push(socket.id);
+  }
+  // const email = getEmailBySocketId(socket.id);
+  // socket.emit("member_added", email);
 
   socket.on("connectionUser", (email) => {
+    // connections.forEach((currentItem: any) => {
+    //   if (currentItem === socket.id) {
+    //     console.log("socketid" + socket.id + "you joined");
+    //   }
+    // });
+    // const connectedMembers = connections.map((socketId: string) => {
+    //   return getEmailBySocketId(socketId);
+    // });
     connections.forEach((currentItem: string) => {
-      socket.to(currentItem).emit("member_added", email);
+      io.to(currentItem).emit("member_added", email);
     });
+    // Gửi danh sách các thành viên đang kết nối cho người mới đăng nhập
+    const connectedMembers = connections.map((socketId: string) => {
+      return getEmailBySocketId(socketId);
+    });
+    socket.emit("connected_members", connectedMembers);
   });
 
   socket.on("conversations", (data: any) => {
@@ -179,12 +196,23 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
+    // console.log("disconnect:" + socket.id);
+    // console.log(connections.length);
+    // connections.forEach((currentItem: any) => {
+    //   console.log(currentItem);
+    // });
     const email = getEmailBySocketId(socket.id);
     const index = connections.indexOf(socket.id);
     if (index > -1) {
       connections.splice(index, 1);
     }
-    socket.emit("member_removed", email);
+
+    if (email) {
+      socket.emit("member_removed", email);
+      connections.forEach((currentItem: string) => {
+        socket.to(currentItem).emit("member_removed", email);
+      });
+    }
   });
 });
 

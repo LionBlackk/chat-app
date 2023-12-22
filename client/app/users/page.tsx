@@ -7,7 +7,6 @@ import { useEffect } from 'react';
 const Users = () => {
   const socket = useSocket();
   const session = useSession();
-
   useEffect(() => {
     const currentUserEmail = session.data?.user?.email;
     socket.emit('connectionUser', currentUserEmail);

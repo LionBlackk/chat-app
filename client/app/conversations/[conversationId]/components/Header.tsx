@@ -9,6 +9,8 @@ import { HiChevronLeft, HiEllipsisHorizontal } from 'react-icons/hi2';
 import ProfileDrawer from './ProfileDrawer';
 import AvatarGroup from '@/app/components/AvatarGroup';
 import useActiveList from '@/app/hooks/useActiveList';
+import { FaVideo } from 'react-icons/fa';
+import { IoIosCall } from 'react-icons/io';
 
 interface HeaderProps {
   conversation: Conversation & {
@@ -39,15 +41,15 @@ const Header: React.FC<HeaderProps> = ({ conversation }) => {
         className='
         flex
         w-full
-          items-center
-          justify-between
-          border-b-[1px]
-          bg-white
-          px-4
-          py-3
-          shadow-sm
-          sm:px-4
-          lg:px-6
+        items-center
+        justify-between
+        border-b-[1px]
+        bg-white
+        px-4
+        py-3
+        shadow-sm
+        sm:px-4
+        lg:px-6
       '
       >
         <div className='flex items-center gap-x-3'>
@@ -76,16 +78,26 @@ const Header: React.FC<HeaderProps> = ({ conversation }) => {
             <div className='text-sm font-light text-gray-500'>{statusText}</div>
           </div>
         </div>
-        <HiEllipsisHorizontal
-          onClick={() => setDrawerOpen(() => true)}
-          className='
-            cursor-pointer
-            text-sky-500
-            transition
-            hover:text-sky-600  
+        <div className='flex items-center gap-x-3'>
+          <IoIosCall
+            className='cursor-pointer text-sky-500 hover:text-sky-600'
+            size={28}
+          />
+          <FaVideo
+            className='cursor-pointer text-sky-500 hover:text-sky-600'
+            size={28}
+          />
+          <HiEllipsisHorizontal
+            onClick={() => setDrawerOpen(() => true)}
+            className='
+          cursor-pointer
+          text-sky-500
+          transition
+          hover:text-sky-600  
           '
-          size={32}
-        />
+            size={32}
+          />
+        </div>
       </div>
     </>
   );

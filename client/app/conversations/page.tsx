@@ -14,6 +14,7 @@ const Home = () => {
   useEffect(() => {
     const currentUserEmail = session.data?.user?.email;
     socket.emit('connectionUser', currentUserEmail);
+    console.log('connectionUser in conversations' + currentUserEmail);
   }, [session.data?.user?.email, socket]);
   return (
     <div

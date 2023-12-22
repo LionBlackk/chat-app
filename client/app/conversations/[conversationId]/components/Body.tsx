@@ -25,8 +25,8 @@ const Body: React.FC<BodyProps> = ({ initialMessages }) => {
       email: currentUserEmail,
       conversationId: conversationId,
     });
-    // axios.post(`/api/conversations/${conversationId}/seen`);
-  }, [conversationId, session.data?.user?.email, socket]);
+    axios.post(`/api/conversations/${conversationId}/seen`);
+  }, [conversationId, session.data?.user?.email]);
 
   useEffect(() => {
     bottomRef?.current?.scrollIntoView();
@@ -56,11 +56,13 @@ const Body: React.FC<BodyProps> = ({ initialMessages }) => {
     socket.on('messageNew', newMessageHandler);
     socket.on('messageUpdate', updateMessageHandler);
     return () => {
+      // socket.off('messageNew', newMessageHandler);
+      // socket.off('messageUpdate', updateMessageHandler);
       socket.on('disconnect', (reason) => {
         console.log(reason);
       });
     };
-  }, [conversationId, socket]);
+  }, [conversationId]);
 
   return (
     <div className='h-full flex-1 overflow-y-auto'>

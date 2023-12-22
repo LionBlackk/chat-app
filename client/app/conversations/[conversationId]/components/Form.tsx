@@ -10,11 +10,14 @@ import UploadFile from './UploadFile';
 import AudioInput from './AudioInput';
 import { useEffect, useRef, useState } from 'react';
 import EmojiPicker from 'emoji-picker-react';
+import useMessageManagement from '@/app/hooks/useMessageManagement';
+import { FullMessageType } from '@/app/types';
 const Form = () => {
   const { conversationId } = useConversation();
   const [message, setMessage] = useState('');
   const [isOpenEmoji, setIsOpenEmoji] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const { addMessage } = useMessageManagement();
 
   const {
     register,
@@ -93,7 +96,6 @@ const Form = () => {
         setValue('message', newMessage);
         return newMessage;
       }
-
       return prevMessage;
     });
   };

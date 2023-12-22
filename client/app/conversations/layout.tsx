@@ -1,6 +1,10 @@
+// 'use client';
+import { useEffect } from 'react';
 import getConversations from '../actions/getConversations';
+import getMessages from '../actions/getMessages';
 import getUsers from '../actions/getUsers';
 import Sidebar from '../components/sidebar/Sidebar';
+import useConversation from '../hooks/useConversation';
 import ConversationList from './components/ConversationList';
 
 export default async function ConversationsLayout({
