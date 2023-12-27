@@ -39,6 +39,8 @@ export async function POST(request: Request) {
       },
     });
 
+    await triggerClient(conversationId, 'messages/new', newMessage);
+
     const updateConversation = await prisma.conversation.update({
       where: {
         id: conversationId,
@@ -63,29 +65,28 @@ export async function POST(request: Request) {
 
     // await triggerClient(conversationId, 'messages/new', newMessage);
 
-    // const lastMessage =
-    //   updateConversation.messages[updateConversation.messages.length - 1];
+    const lastMessage =
+      updateConversation.messages[updateConversation.messages.length - 1];
 
-    // updateConversation.users.forEach((user) => {
-    //   triggerClient(user.email!, 'conversation/update', {
-    //     id: conversationId,
-    //     messages: [lastMessage],
-    //   });
-    // });
-
-    const triggerPromises = [];
-    triggerPromises.push(triggerClient(conversationId, 'messages/new', newMessage));
-
-    const lastMessage = updateConversation.messages[updateConversation.messages.length - 1];
     updateConversation.users.forEach((user) => {
-      triggerPromises.push(triggerClient(user.email!, 'conversation/update', {
+      triggerClient(user.email!, 'conversation/update', {
         id: conversationId,
         messages: [lastMessage],
-      }));
+      });
     });
 
-    await Promise.all(triggerPromises);
+    // const triggerPromises = [];
+    // triggerPromises.push(triggerClient(conversationId, 'messages/new', newMessage));
 
+    // const lastMessage = updateConversation.messages[updateConversation.messages.length - 1];
+    // updateConversation.users.forEach((user) => {
+    //   triggerPromises.push(triggerClient(user.email!, 'conversation/update', {
+    //     id: conversationId,
+    //     messages: [lastMessage],
+    //   }));
+    // });
+
+    // await Promise.all(triggerPromises);
 
     return NextResponse.json(newMessage);
   } catch (error: any) {

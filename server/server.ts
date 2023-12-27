@@ -165,6 +165,19 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("startCall", ({ roomID, callerID, targetEmail }) => {
+    // Here you would find the socket ID of the user you wish to call
+    let targetSocketId = getSocketIdByEmail(targetEmail);
+    if (targetSocketId) {
+      // Notify the target user about the incoming call
+      io.to(targetSocketId).emit("callUser", {
+        roomID,
+        callerID,
+        targetEmail,
+      });
+    }
+  });
+
   EE.on("conversationNew", (data: any) => {
     let socketId = getSocketIdByEmail(data.id);
     //newConversation

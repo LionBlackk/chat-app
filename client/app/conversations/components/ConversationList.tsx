@@ -40,6 +40,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
         }
         return [...current, conversation];
       });
+      // router.refresh();
     };
 
     const updateHandler = (conversation: FullConversationType) => {
@@ -54,6 +55,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
           return currentConversation;
         })
       );
+      // router.refresh();
     };
 
     const removeHandler = (conversation: FullConversationType) => {
@@ -63,6 +65,8 @@ const ConversationList: React.FC<ConversationListProps> = ({
             currentConversation.id !== conversation.id
         )
       );
+      router.push('/conversations');
+      // router.refresh();
     };
 
     socket.on('conversationNew', newHandler);

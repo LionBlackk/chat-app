@@ -4,13 +4,16 @@ import Avatar from '@/app/components/Avatar';
 import useOtherUser from '@/app/hooks/useOtherUser';
 import { Conversation, User } from '@prisma/client';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { HiChevronLeft, HiEllipsisHorizontal } from 'react-icons/hi2';
 import ProfileDrawer from './ProfileDrawer';
 import AvatarGroup from '@/app/components/AvatarGroup';
 import useActiveList from '@/app/hooks/useActiveList';
 import { FaVideo } from 'react-icons/fa';
 import { IoIosCall } from 'react-icons/io';
+import useSocket from '@/app/hooks/useSocket';
+import { useSession } from 'next-auth/react';
+import SomeComponent from './SomeComponent';
 
 interface HeaderProps {
   conversation: Conversation & {
@@ -19,7 +22,13 @@ interface HeaderProps {
 }
 const Header: React.FC<HeaderProps> = ({ conversation }) => {
   const otherUser = useOtherUser(conversation);
+  const session = useSession();
+  useEffect(() => {
+    const currentUserEmail = session.data?.user?.email;
+  }, [session.data?.user?.email]);
+  const currentUserEmail = session.data?.user?.email;
   const { members } = useActiveList();
+  const socket = useSocket();
   const isActive = members.indexOf(otherUser?.email!) !== -1;
   const [drawerOpen, setDrawerOpen] = useState(false);
   const statusText = useMemo(() => {
@@ -30,6 +39,15 @@ const Header: React.FC<HeaderProps> = ({ conversation }) => {
     return isActive ? 'Active' : 'Offline';
   }, [conversation, isActive]);
 
+  const handleCallClick = useCallback(() => {
+    // Trigger the "startCall" event to the server with call details
+    socket.emit('startCall', {
+      roomID: conversation.id,
+      callerID: currentUserEmail, // Provide the caller's user ID
+      targetEmail: otherUser.email, // Provide the target email from the conversation
+    });
+    // Optionally, handle your client-side call initiation logic here
+  }, [socket, conversation, otherUser]);
   return (
     <>
       <ProfileDrawer
@@ -82,6 +100,7 @@ const Header: React.FC<HeaderProps> = ({ conversation }) => {
           <IoIosCall
             className='cursor-pointer text-sky-500 hover:text-sky-600'
             size={28}
+            onClick={handleCallClick}
           />
           <FaVideo
             className='cursor-pointer text-sky-500 hover:text-sky-600'
@@ -97,6 +116,7 @@ const Header: React.FC<HeaderProps> = ({ conversation }) => {
           '
             size={32}
           />
+          {/* <SomeComponent /> */}
         </div>
       </div>
     </>
