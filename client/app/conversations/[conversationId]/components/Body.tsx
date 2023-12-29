@@ -20,7 +20,6 @@ const Body: React.FC<BodyProps> = ({ initialMessages }) => {
   const { conversationId } = useConversation();
   const socket = useSocket();
   const session = useSession();
-  const router = useRouter();
   useEffect(() => {
     const currentUserEmail = session.data?.user?.email;
     socket.emit('connectionUser', currentUserEmail);
@@ -28,7 +27,7 @@ const Body: React.FC<BodyProps> = ({ initialMessages }) => {
       email: currentUserEmail,
       conversationId: conversationId,
     });
-    // axios.post(`/api/conversations/${conversationId}/seen`);
+    axios.post(`/api/conversations/${conversationId}/seen`);
   }, [conversationId, session.data?.user?.email]);
 
   useEffect(() => {
@@ -36,15 +35,16 @@ const Body: React.FC<BodyProps> = ({ initialMessages }) => {
 
     const newMessageHandler = (message: FullMessageType) => {
       // axios.post(`/api/conversations/${conversationId}/seen`);
-      setMessages((current: any) => {
-        if (find(current, { id: message.id })) {
-          return current;
-        }
-        axios.post(`/api/conversations/${conversationId}/seen`);
-        return [...current, message];
-      });
-      bottomRef?.current?.scrollIntoView();
-      // router.refresh();
+      if (message.conversationId === conversationId) {
+        setMessages((current: any) => {
+          if (find(current, { id: message.id })) {
+            return current;
+          }
+          axios.post(`/api/conversations/${conversationId}/seen`);
+          return [...current, message];
+        });
+        bottomRef?.current?.scrollIntoView();
+      }
     };
     const updateMessageHandler = (newMessage: FullMessageType) => {
       setMessages((current: any) =>

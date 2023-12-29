@@ -33,16 +33,6 @@ const ConversationList: React.FC<ConversationListProps> = ({
   useEffect(() => {
     if (!conversationKey) return;
 
-    const newHandler = (conversation: FullConversationType) => {
-      setItems((current: any) => {
-        if (find(current, { id: conversationId })) {
-          return current;
-        }
-        return [...current, conversation];
-      });
-      // router.refresh();
-    };
-
     const updateHandler = (conversation: FullConversationType) => {
       setItems((current: any) =>
         current.map((currentConversation: any) => {
@@ -52,27 +42,39 @@ const ConversationList: React.FC<ConversationListProps> = ({
               messages: conversation.messages,
             };
           }
+
           return currentConversation;
         })
       );
-      // router.refresh();
+    };
+
+    const newHandler = (conversation: FullConversationType) => {
+      setItems((current: any) => {
+        if (find(current, { id: conversation.id })) {
+          return current;
+        }
+        return [conversation, ...current];
+      });
     };
 
     const removeHandler = (conversation: FullConversationType) => {
-      setItems((current: any) =>
-        current.filter(
-          (currentConversation: any) =>
-            currentConversation.id !== conversation.id
-        )
-      );
-      router.push('/conversations');
-      // router.refresh();
+      setItems((current: any) => {
+        const filteredItems = current.filter(
+          (convo: any) => convo.id !== conversation.id
+        );
+        if (filteredItems.length === current.length - 1) {
+          setTimeout(() => {
+            router.push('/conversations');
+          }, 0);
+        }
+        return filteredItems;
+      });
     };
 
-    socket.on('conversationNew', newHandler);
     socket.on('conversationUpdate', updateHandler);
+    socket.on('conversationNew', newHandler);
     socket.on('conversationRemove', removeHandler);
-  }, [conversationKey, router, socket]);
+  }, [conversationKey, socket, router]);
   return (
     <>
       <GroupChatModal

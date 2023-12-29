@@ -13,8 +13,8 @@ export async function DELETE(
   try {
     const { conversationId } = params;
     const currentUser = await getCurrentUser();
-    if (!currentUser?.id || !currentUser?.email) {
-      return new NextResponse('Unauthorized', { status: 401 });
+    if (!currentUser?.id) {
+      return NextResponse.json(null);
     }
 
     const existingConversation = await prisma.conversation.findUnique({
@@ -29,7 +29,11 @@ export async function DELETE(
     if (!existingConversation) {
       return new NextResponse('Invalid conversationId', { status: 400 });
     }
-
+    await prisma.message.deleteMany({
+      where: {
+        conversationId: conversationId,
+      },
+    });
     const deletedConversation = await prisma.conversation.deleteMany({
       where: {
         id: conversationId,
@@ -38,7 +42,6 @@ export async function DELETE(
         },
       },
     });
-
     existingConversation.users.forEach((user: any) => {
       if (user.email) {
         triggerClient(user.email, 'conversation/remove', existingConversation);
@@ -47,6 +50,7 @@ export async function DELETE(
 
     return NextResponse.json(deletedConversation);
   } catch (error: any) {
+    console.log(error);
     return new NextResponse('Internal Error', { status: 500 });
   }
 }
