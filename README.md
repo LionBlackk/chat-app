@@ -75,40 +75,40 @@ npm run dev
 
 ### Sign in UI
 
-![Alt text](image.png)
+![image](https://github.com/LionBlackk/PBL4/assets/92169263/559a8c34-a4df-452c-8c89-ab8b5aa9f934)
 
 ### Login UI
 
-![Alt text](image-1.png)
+![image](https://github.com/LionBlackk/PBL4/assets/92169263/92202624-1a1a-49a7-94fc-9e9e2c5ea68a)
 
 ### UI after login
 
-![Alt text](image-2.png)
+![image](https://github.com/LionBlackk/PBL4/assets/92169263/21797fbc-e496-45e1-8e20-298ec6cf5737)
 
 ### UI show users offline or online
 
-![Alt text](image-3.png)
+![image](https://github.com/LionBlackk/PBL4/assets/92169263/d196e68f-3a55-4d97-b9c2-49a75399f2c3)
 
 ### UI update information user
 
-![Alt text](image-4.png)
+![image](https://github.com/LionBlackk/PBL4/assets/92169263/8a6d1783-6cb1-4e46-9f3d-35447d4264ed)
 
 ### UI chat box
 
-![Alt text](image-5.png)
+![image](https://github.com/LionBlackk/PBL4/assets/92169263/f843da8a-c062-484f-a46a-4147c6f6e814)
 
 ### UI group chat box
-
-![Alt text](image-6.png)
+![image](https://github.com/LionBlackk/PBL4/assets/92169263/c2ed14cb-e5e4-4eb0-934c-cef697e6cf15)
+![image](https://github.com/LionBlackk/PBL4/assets/92169263/aa3175b3-e488-4ce2-bc1c-ca3660f0df04)
 
 ### UI send file, image, ...
 
-![Alt text](image-7.png)
+![image](https://github.com/LionBlackk/PBL4/assets/92169263/41d290df-eb2d-4f15-8168-aca0ec874513)
 
 ### UI send emoji
 
-![Alt text](image-8.png)
+![image](https://github.com/LionBlackk/PBL4/assets/92169263/0d8d36b2-bafe-4146-808d-907d8ee25dc9)
 
 ### UI delete chat box
 
-![Alt text](image-9.png)
+![image](https://github.com/LionBlackk/PBL4/assets/92169263/b60f8f3f-087d-43cb-aa3f-c7d0f75eda42)
