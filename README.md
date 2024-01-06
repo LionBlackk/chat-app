@@ -1,4 +1,4 @@
-# PBL4
+# Chat app
 
 ## Technology:
 
